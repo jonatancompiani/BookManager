@@ -1,6 +1,5 @@
 ﻿using Company.BookManager.Domain.Abstractions;
 using Company.BookManager.Domain.Entities;
-using Company.BookManager.Domain.Mappers;
 using Company.BookManager.Domain.Model;
 
 namespace Company.BookManager.Application.Services;
@@ -14,28 +13,28 @@ public class BookService : IBookService
         _bookDataAccess = bookDataAccess;
     }
 
-    public IEnumerable<BookResponseDto> GetBooks(BookSearchDto searchCriteria)
+    public async Task<IEnumerable<Book>> GetBooksAsync(Book searchCriteria)
     {
-        return _bookDataAccess.Get(searchCriteria.ToEntity()).ToDto();
+        return await _bookDataAccess.GetAsync(searchCriteria);
     }
 
-    public BookResponseDto? GetBook(int id)
+    public async Task<Book?> GetBookAsync(int id)
     {
-        return _bookDataAccess.GetById(id)?.ToDto();
+        return await _bookDataAccess.GetByIdAsync(id);
     }
 
-    public void CreateBook(BookCreateDto bookDetails)
+    public async Task<Book> CreateBookAsync(Book bookDetails)
     {
-        _ = _bookDataAccess.Insert(bookDetails.ToEntity());
+        return await _bookDataAccess.InsertAsync(bookDetails);
     }
 
-    public void UpdateBook(BookUpdateDto bookDetails)
+    public async Task UpdateBookAsync(BookUpdateDto bookDetails)
     {
         throw new NotImplementedException();
     }
 
-    public void DeleteBook(int id)
+    public async Task DeleteBookAsync(Book book)
     {
-        _ = _bookDataAccess.Delete(id);
+        _ = await _bookDataAccess.DeleteAsync(book);
     }
 }

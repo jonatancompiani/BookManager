@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Company.BookManager.Domain.Abstractions;
 using Company.BookManager.Domain.Model;
+using Microsoft.EntityFrameworkCore;
+using Company.BookManager.Domain.Mappers;
 
 namespace Company.BookManager.API.Controllers;
 
@@ -15,35 +17,52 @@ public class BookController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult Get([FromQuery]BookSearchDto searchCriteria)
+    public async Task<ActionResult<IEnumerable<BookResponseDto?>>> Get([FromQuery]BookSearchDto searchCriteria)
     {
-        return Ok(_service.GetBooks(searchCriteria));
+        var result = await _service.GetBooksAsync(searchCriteria.ToEntity());
+
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public IActionResult Get(int id)
+    public async Task<ActionResult<BookResponseDto?>> Get(int id)
     {
-        return Ok(_service.GetBook(id));
+        var book = await _service.GetBookAsync(id);
+
+        if (book == null)
+        {
+            return NotFound();
+        }
+
+        return book.ToDto();
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody] BookCreateDto bookDetails)
+    public async Task<ActionResult<BookResponseDto>> Post([FromBody] BookCreateDto bookDetails)
     {
-        _service.CreateBook(bookDetails);
-        return Accepted();
+        var result = await _service.CreateBookAsync(bookDetails.ToEntity());
+
+        return CreatedAtAction(nameof(Post), new { id = result.Id }, result);
     }
 
     [HttpPatch("{id}")]
     public IActionResult Patch(BookUpdateDto bookDetails)
     {
-        _service.UpdateBook(bookDetails);
+        _service.UpdateBookAsync(bookDetails);
         return Accepted();
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        _service.DeleteBook(id);
+        var book = await _service.GetBookAsync(id);
+        if (book is null)
+        {
+            return NotFound();
+        }
+
+        _ = _service.DeleteBookAsync(book);
+
         return NoContent();
     }
 }

@@ -5,9 +5,9 @@ namespace Company.BookManager.Domain.Abstractions;
 
 public interface IBookService
 {
-    IEnumerable<BookResponseDto> GetBooks(BookSearchDto searchCriteria);
-    BookResponseDto? GetBook(int id);
-    void CreateBook(BookCreateDto bookDetails);
-    void UpdateBook(BookUpdateDto bookDetails);
-    void DeleteBook(int id);
+    Task<IEnumerable<Book>> GetBooksAsync(Book searchCriteria);
+    Task<Book?> GetBookAsync(int id);
+    Task<Book> CreateBookAsync(Book bookDetails);
+    Task UpdateBookAsync(BookUpdateDto bookDetails);
+    Task DeleteBookAsync(Book book);
 }

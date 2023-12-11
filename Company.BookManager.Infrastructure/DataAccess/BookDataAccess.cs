@@ -13,12 +13,12 @@ public class BookDataAccess : IDataAccess<Book>
         _dataContext = dataContext;
 	}
 
-    public Book? GetById(int id)
+    public async Task<Book?> GetByIdAsync(int id)
     {
         return _dataContext.Books.FirstOrDefault(x => x.Id == id);
     }
 
-    public IEnumerable<Book> Get(Book searchCriteria)
+    public async Task<IEnumerable<Book>> GetAsync(Book searchCriteria)
     {
         return _dataContext
             .Books
@@ -28,33 +28,23 @@ public class BookDataAccess : IDataAccess<Book>
                 && (searchCriteria.PublishYear == null || x.PublishYear == searchCriteria.PublishYear));
     }
 
-    public Book Insert(Book bookDetails)
+    public async Task<Book> InsertAsync(Book bookDetails)
     {
         _dataContext.Books.Add(bookDetails);
         _dataContext.SaveChanges();
         return bookDetails;
     }
 
-    public Book Update(Book bookDetails)
+    public async Task<Book> UpdateAsync(Book bookDetails)
     {
         throw new NotImplementedException();
     }
 
-    public Book Delete(int id)
+    public async Task<Book> DeleteAsync(Book book)
     {
-        var itemToDelete =
-            _dataContext
-            .Books
-            .FirstOrDefault(x => x.Id == id);
-
-        if (itemToDelete is null)
-        {
-            throw new ArgumentException("Item Not Found");
-        }
-
-        _ = _dataContext.Books.Remove(itemToDelete);
+        _ = _dataContext.Books.Remove(book);
         _dataContext.SaveChanges();
 
-        return itemToDelete;
+        return book;
     }
 }

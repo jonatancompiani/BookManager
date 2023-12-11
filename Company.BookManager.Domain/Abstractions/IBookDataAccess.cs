@@ -2,9 +2,9 @@
 
 public interface IDataAccess<T>
 {
-    IEnumerable<T> Get(T searchCriteria);
-    T? GetById(int id);
-    T Insert(T bookDetails);
-    T Update(T bookDetails);
-    T Delete(int id);
+    Task<IEnumerable<T>> GetAsync(T searchCriteria);
+    Task<T?> GetByIdAsync(int id);
+    Task<T> InsertAsync(T entity);
+    Task<T> UpdateAsync(T entity);
+    Task<T> DeleteAsync(T entity);
 }
